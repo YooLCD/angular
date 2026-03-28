@@ -7,6 +7,7 @@
  */
 
 import {DOCUMENT} from '../..';
+import {CSP_NONCE} from '@angular/core';
 import {HttpHeaders} from '../src/headers';
 import {
   JSONP_ERR_HEADERS_NOT_SUPPORTED,
@@ -129,4 +130,9 @@ describe('JsonpClientBackend', () => {
       document.mockLoad();
     });
   });
+});
+
+describe('CSP nonce', () => {
+  it('sets nonce attribute on script element when CSP_NONCE token is provided', ...);
+  it('does not set nonce attribute when CSP_NONCE token is not provided', ...);
 });
