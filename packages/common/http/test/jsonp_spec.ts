@@ -121,7 +121,7 @@ describe('JsonpClientBackend', () => {
     it('does not set nonce attribute when CSP_NONCE token is not provided', (done) => {
       backend.handle(SAMPLE_REQ).subscribe();
 
-      expect(mockDoc.mock!.getAttribute('nonce')).toBeNull();
+      expect(document.mock!.getAttribute('nonce')).toBeNull();
       done();
     });
   });
