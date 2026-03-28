@@ -99,6 +99,33 @@ describe('JsonpClientBackend', () => {
     // executing.
     expect(document.mock!.ownerDocument).not.toEqual(document);
   });
+  describe('CSP nonce', () => {
+    it('sets nonce attribute on script element when CSP_NONCE token is provided', (done) => {
+      TestBed.resetTestingModule();
+      const mockDoc = new MockDocument();
+      TestBed.configureTestingModule({
+        providers: [
+          JsonpClientBackend,
+          {provide: JsonpCallbackContext, useValue: {}},
+          {provide: DOCUMENT, useValue: mockDoc},
+          {provide: CSP_NONCE, useValue: 'test-nonce-123'},
+        ],
+      });
+      const nonceBackend = TestBed.inject(JsonpClientBackend);
+      nonceBackend.handle(SAMPLE_REQ).subscribe();
+
+      expect(mockDoc.mock!.getAttribute('nonce')).toBe('test-nonce-123');
+      done();
+    });
+
+    it('does not set nonce attribute when CSP_NONCE token is not provided', (done) => {
+      backend.handle(SAMPLE_REQ).subscribe();
+
+      expect(mockDoc.mock!.getAttribute('nonce')).toBeNull();
+      done();
+    });
+  });
+
   describe('throws an error', () => {
     it('when request method is not JSONP', () =>
       expect(() => backend.handle(SAMPLE_REQ.clone<never>({method: 'GET'}))).toThrowError(
@@ -130,9 +157,4 @@ describe('JsonpClientBackend', () => {
       document.mockLoad();
     });
   });
-});
-
-describe('CSP nonce', () => {
-  it('sets nonce attribute on script element when CSP_NONCE token is provided', ...);
-  it('does not set nonce attribute when CSP_NONCE token is not provided', ...);
 });
