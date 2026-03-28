@@ -100,7 +100,7 @@ export class JsonpClientBackend implements HttpBackend {
   constructor(
     private callbackMap: JsonpCallbackContext,
     @Inject(DOCUMENT) private document: any,
-    @Inject(CSP_NONCE) @Optional() private readonly nonce: string | null = null,
+    @Optional() @Inject(CSP_NONCE) private readonly nonce: string | null = null,
   ) {}
 
   /**
