@@ -8,10 +8,12 @@
 
 import {DOCUMENT} from '../../index';
 import {
+  CSP_NONCE,
   EnvironmentInjector,
   Inject,
   inject,
   Injectable,
+  Optional,
   runInInjectionContext,
   ɵRuntimeError as RuntimeError,
 } from '@angular/core';
@@ -98,6 +100,7 @@ export class JsonpClientBackend implements HttpBackend {
   constructor(
     private callbackMap: JsonpCallbackContext,
     @Inject(DOCUMENT) private document: any,
+    @Inject(CSP_NONCE) @Optional() private readonly nonce: string | null = null,
   ) {}
 
   /**
@@ -148,7 +151,13 @@ export class JsonpClientBackend implements HttpBackend {
       // Construct the <script> tag and point it at the URL.
       const node = this.document.createElement('script');
       node.src = url;
-
+      
+      // Set the nonce for Content Security Policy compatibility. Without this,
+      // JSONP requests will be blocked by strict-dynamic CSP policies.
+      if (this.nonce) {
+        node.setAttribute('nonce', this.nonce);
+      }
+      
       // A JSONP request requires waiting for multiple callbacks. These variables
       // are closed over and track state across those callbacks.
 
